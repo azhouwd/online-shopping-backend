@@ -32,4 +32,6 @@ app.post('/updateProfile/',(req,res)=>{profile.handleProfileUpdate(req,res,db)})
 app.get('/profile/:id',(req,res)=>{profile.handleProfileGet(req,res,db)});
 app.get('/getOrderHistory/:id',(req,res)=>{profile.handleOrderGet(req,res,db)})
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000, ()=>{
+	console.log(`app is running on ${process.env.PORT}`)
+});
