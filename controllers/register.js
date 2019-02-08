@@ -7,11 +7,6 @@ const handleRegister = (db,bcrypt,req,res) => {
 	if(!email || !name || !password || !phone){
 		return res.status(400).json('incomplete registration information');
 	}
-	db('users').where('email',email).returning('*').then(result=>{
-		if(Object.getOwnPropertyNames(result[0]).length!==0){
-			return res.status(400).json('user already exists');
-		}
-	})
 	const hash = bcrypt.hashSync(password,10);
 	db.transaction(trx=>{
 		trx.insert({
@@ -28,7 +23,8 @@ const handleRegister = (db,bcrypt,req,res) => {
 				   		address:address
 				   })
 				   .then(user=>{
-				   		res.json(user[0]);
+				   		createSession(user[0]).then(session=>res.json(session))
+						.catch(console.log)
 				   })
 		}).then(trx.commit).catch(trx.rollback)
 	})
