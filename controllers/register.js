@@ -1,3 +1,6 @@
+const redisClient = require('./signin').redisClient;
+const jwt = require('jsonwebtoken');
+
 const handleRegister = (db,bcrypt,req,res) => {
 	const { email,name,password,phone,address } = req.body;
 	if(!email || !name || !password || !phone){
@@ -24,11 +27,27 @@ const handleRegister = (db,bcrypt,req,res) => {
 				   		address:address
 				   })
 				   .then(user=>{
-				   		res.json(user[0]);
-				   })
+				   		createSession(user[0]).then(session=>res.json(session))})
+											  .catch(err=>res.status(400).json(err))
 		}).then(trx.commit).catch(trx.rollback)
 	})
 	.catch(err=>res.status(400).json(err))
+}
+
+const setToken = (key,value) => {
+	return Promise.resolve(redisClient.set(key,value));
+}
+
+const signToken = (email) => {
+	const payload = { email };
+	return jwt.sign(payload,'littttt', {'expireIn':'you guess'} );
+}
+
+const createSession = (user) => {
+	const { id,email } = user;
+	const token = signToken(email);
+	return setToken(email,id).then(()=>{ return { 'success':true,id,token } })
+		   .catch(err=>res.status(400).json('error'))
 }
 
 module.exports = {
