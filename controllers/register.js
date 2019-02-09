@@ -40,7 +40,7 @@ const setToken = (key,value) => {
 
 const signToken = (email) => {
 	const payload = { email };
-	return jwt.sign(payload,'littttt', {'expireIn':'you guess'} );
+	return jwt.sign(payload,'JWT_SECRET', {expiresIn: '2 days'} );
 }
 
 const createSession = (user) => {
