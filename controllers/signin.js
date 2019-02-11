@@ -51,6 +51,7 @@ const createSession = (user) => {
 		   .catch(console.log)
 }
 
+
 const signinAuthentication = (req,res,db,bcrypt) => {
 	const { authorization } = req.headers;
 	return authorization ? getTokenId(req,res) : 
